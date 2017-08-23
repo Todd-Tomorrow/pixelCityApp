@@ -36,6 +36,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     
     //API work - create an empty array of strings for the URLS
     var imageUrlArray = [String]()
+    var imageArray = [UIImage]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,6 +86,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func animateViewDown(){
+        cancelAllSessions()
         pullUpViewHighConstraint.constant = 0
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -162,11 +164,11 @@ extension MapVC: MKMapViewDelegate {
     
     //drop the pin on the map
     @objc func dropPin(sender: UITapGestureRecognizer){
-        //remove Pins,spinners and progressLbl so only the new one will show
+        //remove Pins,spinners and progressLbl so only the new one will show canceldata session
         removePin()
         removeSpinner()
         removeProgressLbl()
-        
+        cancelAllSessions()
         //get the coordinates of the screen on doubleTap
         let touchPoint = sender.location(in: mapView)
         //convert into lat and lon cooridates
@@ -187,8 +189,18 @@ extension MapVC: MKMapViewDelegate {
         addProgressLbl()
         //add the swipe action to dismiss this view when not needed
         addSwipe()
-        retrieveUrls(forAnnotation: annotation) { (true) in
+        retrieveUrls(forAnnotation: annotation) { (finished) in
             print(self.imageUrlArray)
+            if finished {
+                self.retrieveImages(handler: { (finished) in
+                    if finished {
+                        //hide spinner, label
+                        self.removeSpinner()
+                        self.removeProgressLbl()
+                        //and reload collectionview
+                    }
+                })
+            }
         }
     }
     
@@ -224,6 +236,38 @@ extension MapVC: MKMapViewDelegate {
         }
         
     }
+    
+    
+    func retrieveImages(handler:@escaping(_ status:Bool) ->()) {
+        //clear out precious loaded images
+        imageArray = []
+        
+        for url in imageUrlArray {
+            Alamofire.request(url).responseImage(completionHandler: { (response) in
+                //deal with the response
+                guard let image = response.result.value else {return}
+                self.imageArray.append(image)
+                
+                self.progressLbl?.text = "\(self.imageArray.count)/\(self.imageUrlArray.count) IMAGES DOWNLOADED"
+                
+                
+                if self.imageArray.count == self.imageUrlArray.count {
+                    handler(true)
+                }
+            })
+        }
+        
+    }
+    
+    
+    func cancelAllSessions() {
+        Alamofire.SessionManager.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, downloadData) in
+            sessionDataTask.forEach({$0.cancel()})
+            downloadData.forEach({$0.cancel()})
+            
+        }
+    }
+    
     
     //end of MKMapViewDelegate
 }
