@@ -25,11 +25,13 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     let authorizationStatus = CLLocationManager.authorizationStatus()
     //1000 is 1000 feet
     let regionRadius: Double = 1000
-    
+    var screenSize = UIScreen.main.bounds
     var spinner: UIActivityIndicatorView?
     var progressLbl :UILabel?
+    //start creating a programmatic collection view
+    var flowLayout = UICollectionViewFlowLayout()
+    var collectionView:UICollectionView?
     
-    var screenSize = UIScreen.main.bounds
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +40,14 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         //see below in the extension
         configureLocationServices()
         addDoubleTap()
+        
+        //instance of the collectionView with the reusable cell
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: flowLayout)
+        collectionView?.register(PhotoCell.self, forCellWithReuseIdentifier: "photoCell")
+        collectionView?.delegate = self
+        collectionView?.dataSource = self
+        collectionView?.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
+        pullUpView.addSubview(collectionView!)
     }
 
     func addDoubleTap(){                                                        //it will send doubleTap to dropPin()
@@ -83,9 +93,31 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         spinner?.activityIndicatorViewStyle = .whiteLarge
         spinner?.color = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         spinner?.startAnimating()
-        pullUpView.addSubview(spinner!)
+        collectionView?.addSubview(spinner!)
     }
     
+    func removeSpinner(){
+        if spinner != nil{
+            spinner?.removeFromSuperview()
+        }
+    }
+    
+    func addProgressLbl(){
+        progressLbl = UILabel()                                        //25 points below the spinner
+        progressLbl?.frame = CGRect(x: (screenSize.width / 2) - 150, y: 175, width: 300, height: 40)
+        progressLbl?.font = UIFont(name: "Avenir Next", size: 18)
+        progressLbl?.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        progressLbl?.textAlignment = .center
+        //progressLbl?.text = "1/16 PHOTOS LOADED"
+        collectionView?.addSubview(progressLbl!)
+        
+    }
+    
+    func removeProgressLbl(){
+        if progressLbl != nil {
+            progressLbl?.removeFromSuperview()
+        }
+    }
     
     //actions
     @IBAction func centreMapBtnWasPressed(_ sender: Any) {
@@ -126,8 +158,10 @@ extension MapVC: MKMapViewDelegate {
     
     //drop the pin on the map
     @objc func dropPin(sender: UITapGestureRecognizer){
-        //remove Pins so only the new one will show
+        //remove Pins,spinners and progressLbl so only the new one will show
         removePin()
+        removeSpinner()
+        removeProgressLbl()
         
         //get the coordinates of the screen on doubleTap
         let touchPoint = sender.location(in: mapView)
@@ -139,10 +173,14 @@ extension MapVC: MKMapViewDelegate {
         //create a new mapRegion around the touchCoordinate, then reload the map
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
+        //print FlickrAPI URL
+        print(flickrURL(forApiKey: API_KEY, withAnnonation: annotation, addNumberOfPhotos: 40))
+        
         //extend the view for photos
         animateViewUp()
-        //add spinner
+        //add spinner and progress label
         addSpinner()
+        addProgressLbl()
         //add the swipe action to dismiss this view when not needed
         addSwipe()
     }
@@ -171,5 +209,25 @@ extension MapVC: CLLocationManagerDelegate {
         centerMapOnUserLocation()
     }
     
+}
+
+//conform to the requirements of the UICOllectionView
+extension MapVC:UICollectionViewDelegate, UICollectionViewDataSource{
+    //number of sections
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    //number of items in section
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    //content of items
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as? PhotoCell
+        return cell!
+        
+    }
 }
 

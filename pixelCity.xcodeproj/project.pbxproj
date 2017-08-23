@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5F144B451F4CC59C005086B3 /* DroppablePin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F144B441F4CC59C005086B3 /* DroppablePin.swift */; };
+		5F2FCC0D1F4D74220091BE16 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2FCC0C1F4D74220091BE16 /* PhotoCell.swift */; };
+		5F2FCC0F1F4D9BFC0091BE16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2FCC0E1F4D9BFC0091BE16 /* Constants.swift */; };
 		5FA171721F4C5DB8001A8487 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA171711F4C5DB8001A8487 /* AppDelegate.swift */; };
 		5FA171741F4C5DB8001A8487 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA171731F4C5DB8001A8487 /* MapVC.swift */; };
 		5FA171771F4C5DB8001A8487 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA171751F4C5DB8001A8487 /* Main.storyboard */; };
@@ -20,6 +22,8 @@
 		3E4B5D030DBD9329D27B568B /* Pods-pixelCity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pixelCity.release.xcconfig"; path = "Pods/Target Support Files/Pods-pixelCity/Pods-pixelCity.release.xcconfig"; sourceTree = "<group>"; };
 		5B3FF9064BB1BD30B2418292 /* Pods-pixelCity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pixelCity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pixelCity/Pods-pixelCity.debug.xcconfig"; sourceTree = "<group>"; };
 		5F144B441F4CC59C005086B3 /* DroppablePin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppablePin.swift; sourceTree = "<group>"; };
+		5F2FCC0C1F4D74220091BE16 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
+		5F2FCC0E1F4D9BFC0091BE16 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5FA1716E1F4C5DB8001A8487 /* pixelCity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pixelCity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA171711F4C5DB8001A8487 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FA171731F4C5DB8001A8487 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				5F144B441F4CC59C005086B3 /* DroppablePin.swift */,
+				5F2FCC0C1F4D74220091BE16 /* PhotoCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -110,6 +115,7 @@
 		5FA171871F4C5E1A001A8487 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				5F2FCC0E1F4D9BFC0091BE16 /* Constants.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -245,6 +251,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F2FCC0F1F4D9BFC0091BE16 /* Constants.swift in Sources */,
+				5F2FCC0D1F4D74220091BE16 /* PhotoCell.swift in Sources */,
 				5FA171741F4C5DB8001A8487 /* MapVC.swift in Sources */,
 				5F144B451F4CC59C005086B3 /* DroppablePin.swift in Sources */,
 				5FA171721F4C5DB8001A8487 /* AppDelegate.swift in Sources */,
