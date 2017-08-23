@@ -9,6 +9,8 @@
 import UIKit
 import MapKit
 import CoreLocation
+import Alamofire
+import AlamofireImage
 
 class MapVC: UIViewController, UIGestureRecognizerDelegate {
     
@@ -32,6 +34,8 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     var flowLayout = UICollectionViewFlowLayout()
     var collectionView:UICollectionView?
     
+    //API work - create an empty array of strings for the URLS
+    var imageUrlArray = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -183,6 +187,9 @@ extension MapVC: MKMapViewDelegate {
         addProgressLbl()
         //add the swipe action to dismiss this view when not needed
         addSwipe()
+        retrieveUrls(forAnnotation: annotation) { (true) in
+            print(self.imageUrlArray)
+        }
     }
     
     func removePin() {
@@ -192,6 +199,33 @@ extension MapVC: MKMapViewDelegate {
             mapView.removeAnnotation(annonation)
         }
     }
+                                                                        //means that the result can escape the function and be used elsewhere
+    func retrieveUrls(forAnnotation annotation:DroppablePin, handler: @escaping(_ status:Bool) -> () ){
+        //clear previous loaded arrays
+        imageUrlArray = []
+        //Call the flickerAPIURL
+        Alamofire.request(flickrURL(forApiKey: API_KEY, withAnnonation: annotation, addNumberOfPhotos: 40)).responseJSON { (response) in
+            
+            guard let json = response.result.value as? Dictionary<String, AnyObject> else {return}
+            
+            let photosDict = json["photos"] as! Dictionary<String, AnyObject>
+            let photosDictArray = photosDict["photo"] as! [Dictionary<String, AnyObject>]
+            
+            for photo in photosDictArray {
+                //create a user based on the flicker API response and flickstaticWebUrl structure
+                // which is: https://farm8.staticflickr.com/7169/6717637369_0e43d11892_b_d.jpg
+                // which is           farm               server/      id   _    secret_b_d.jpg
+                let postUrl = "https://farm\(photo["farm"]!).staticflickr.com/\(photo["server"]!)/\(photo["id"]!)_\(photo["secret"]!)_h_d.jpg"
+                //append the URL to the imageURLArray
+                self.imageUrlArray.append(postUrl)
+            }
+            //finish this process
+            handler(true)
+        }
+        
+    }
+    
+    //end of MKMapViewDelegate
 }
 
 extension MapVC: CLLocationManagerDelegate {
